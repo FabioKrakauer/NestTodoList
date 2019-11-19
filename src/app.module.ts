@@ -1,9 +1,20 @@
 import { Module } from '@nestjs/common';
-import { ListModule } from './Module/list.module';
-import { ItemModule } from './Module/item.module';
-
+import {TypeOrmModule} from '@nestjs/typeorm';
+import { List } from './Entity/list.entity';
+import { Item } from './Entity/item.entity';
+import { ListItemModule } from './Module/ListItem.module';
 @Module({
-  imports: [ListModule, ItemModule],
+  imports:  [TypeOrmModule.forRoot({
+    type: 'mysql',
+    host: '127.0.0.1',
+    port: 3306,
+    username: 'root',
+    password: 'root',
+    database: 'todoList',
+    entities: [List, Item],
+    synchronize: true,
+    logging: true
+  }), ListItemModule],
   controllers: [],
   providers: [],
 })
