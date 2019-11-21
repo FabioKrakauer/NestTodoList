@@ -15,5 +15,7 @@ export class ListRepository {
     async createNewList(list: List): Promise<List>{
         return await this.manager.save(list);
     }
-    
+    async updateList(list: number, values: object){
+        return await this.manager.update(List, {id: list}, values);
+    }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ItemRepository } from 'src/Repository/item.repository';
-import { getCustomRepository } from 'typeorm';
+import { getCustomRepository, UpdateResult } from 'typeorm';
 import { Item } from 'src/Entity/item.entity';
 
 @Injectable()
@@ -18,5 +18,8 @@ export class ItemService {
     }
     async registerNewItem(item: Item): Promise<Item>{
         return await this.itemRepository.createNewItem(item);
+    }
+    async updateItem(itemId: number, listId: number, values: object): Promise<UpdateResult> {
+        return await this.itemRepository.updateItem(itemId, listId, values);
     }
 }

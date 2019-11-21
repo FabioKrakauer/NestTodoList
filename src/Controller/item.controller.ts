@@ -1,8 +1,12 @@
-import { Controller, Post, Body, Get, HttpStatus, HttpException } from '@nestjs/common';
+import { Controller, Post, Body, Get, HttpStatus, HttpException, Put, Param } from '@nestjs/common';
 import { Item } from 'src/Entity/item.entity';
 import { ItemService } from 'src/Provider/item.service';
 import { ListService } from 'src/Provider/list.service';
 import { List } from 'src/Entity/list.entity';
+import { UpdateResult } from 'typeorm';
+import { Validator } from 'src/DTO/validator.dto';
+import { throws } from 'assert';
+import { CorrectData } from 'src/DTO/correctionData.dto';
 
 @Controller('item')
 export class ItemController {
@@ -29,7 +33,7 @@ export class ItemController {
             throw new HttpException("O id da lista não pode ser nulo ou vazio", HttpStatus.BAD_REQUEST);
         }
         const list: List = await this.listService.getListById(body.list);
-        if(!list){
+        if (!list) {
             throw new HttpException("Esta lista não existe!", HttpStatus.BAD_REQUEST);
         }
         try {
@@ -37,5 +41,31 @@ export class ItemController {
         } catch (error) {
             throw new HttpException("Erro interno", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+    @Get('/:id')
+    async getItem(@Param() param): Promise<Item> {
+        if (param.id < 1) {
+            throw new HttpException("Erro ao indentificar id", HttpStatus.BAD_REQUEST);
+        }
+        return await this.itemService.getItem(param.id);
+    }
+
+    @Put('/:itemId/:listId')
+    async updateItemValue(@Param() params, @Body() body): Promise<object> {
+        if (params.itemId < 1) {
+            throw new HttpException("ID do item invalido!", HttpStatus.BAD_REQUEST);
+        }
+        if (params.listId < 1) {
+            throw new HttpException("ID da lista invalido!", HttpStatus.BAD_REQUEST);
+        }
+        const validateValues = new Validator().validateItemUpdate(body);
+        if (validateValues.error == true) {
+            throw new HttpException(validateValues.message, HttpStatus.BAD_REQUEST);
+        }
+
+        const objects: object = new CorrectData().constructItemUpdate(body);
+
+        const queryResult: UpdateResult = await this.itemService.updateItem(params.itemId, params.listId, objects);
+        return { affectedRows: queryResult.raw.affectedRows };
     }
 }

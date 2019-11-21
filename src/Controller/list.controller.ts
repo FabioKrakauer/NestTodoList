@@ -1,6 +1,9 @@
-import { Controller, Get, HttpException, HttpStatus, Param, Post, Body } from '@nestjs/common';
+import { Controller, Get, HttpException, HttpStatus, Param, Post, Body, Put } from '@nestjs/common';
 import { ListService } from 'src/Provider/list.service';
 import { List } from 'src/Entity/list.entity';
+import { Validator } from 'src/DTO/validator.dto';
+import { CorrectData } from 'src/DTO/correctionData.dto';
+import { UpdateResult } from 'typeorm';
 
 @Controller('list')
 export class ListController {
@@ -12,7 +15,7 @@ export class ListController {
         try {
             return this.listService.getAllLists();
         } catch (error) {
-            throw new HttpException("internal error", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new HttpException("Internal error: " + error, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     @Get('/:id')
@@ -34,5 +37,19 @@ export class ListController {
         list.name = body.name;
         list.description = body.description;
         return await this.listService.createNewList(list);
+    }
+    @Put('/:listId')
+    async updateList(@Param() param, @Body() body): Promise<object> {
+        if(param.listId < 1){
+            throw new HttpException("Erro ao indentificar id", HttpStatus.BAD_REQUEST);
+        }
+        const validateValues = new Validator().validateListUpdate(body);
+        if(validateValues.error === true){
+            throw new HttpException(validateValues.message, HttpStatus.BAD_REQUEST);
+        }
+        const object = new CorrectData().constructListUpdate(body);
+
+        const queryResult: UpdateResult = await this.listService.updateList(param.id, object);
+        return { affectedRows: queryResult.raw.affectedRows };  
     }
 }

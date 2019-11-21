@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ListRepository } from 'src/Repository/list.repository';
-import { getCustomRepository } from 'typeorm';
+import { getCustomRepository, UpdateResult } from 'typeorm';
 import { List } from 'src/Entity/list.entity';
 
 @Injectable()
@@ -17,5 +17,8 @@ export class ListService {
     }
     async createNewList(list: List): Promise<List>{
         return await this.listRepository.createNewList(list);
+    }
+    async updateList(list: number, values: object): Promise<UpdateResult> {
+        return await this.listRepository.updateList(list, values);
     }
 }
