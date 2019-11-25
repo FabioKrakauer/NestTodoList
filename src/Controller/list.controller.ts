@@ -1,7 +1,6 @@
 import { Controller, Get, HttpException, HttpStatus, Param, Post, Body, Put, UseInterceptors, Delete } from '@nestjs/common';
 import { ListService } from 'src/Provider/list.service';
 import { List } from 'src/Entity/list.entity';
-import { Validator } from 'src/DTO/validator.dto';
 import { CorrectData } from 'src/DTO/correctionData.dto';
 import { UpdateResult } from 'typeorm';
 import { ValidatorInterceptor } from 'src/interceptors/ValidatorInterceptor';

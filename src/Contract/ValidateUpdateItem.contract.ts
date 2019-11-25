@@ -3,23 +3,21 @@ import { Item } from "src/Entity/item.entity";
 
 export class ValidateUpdateItemContract implements ContractInterface {
 
-    validate(object: Item) {
+    validate(item: Item) {
         let result = {error: false, errors: []};
-        if (!object) {
-            return {
-                error: true,
-                message: "Você precisa informar algum dado a ser alterado!"
-            };
+        if (!item) {
+            result.error = true;
+            result.errors.push("Erro ao indentificar item");
         }
-        if(!object.name){
+        if(!item.name){
             result.error = true;
             result.errors.push("Erro ao indentificar nome da lista");
         }
-        if(!object.description){
+        if(!item.description){
             result.error = true;
             result.errors.push("Erro ao indentificar descrição da lista");
         }
-        if(!object.isChecked){
+        if(!item.isChecked){
             result.error = true;
             result.errors.push("Erro ao indentificar se o item foi realziado!");
         }

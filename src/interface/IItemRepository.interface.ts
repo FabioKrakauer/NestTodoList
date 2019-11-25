@@ -1,6 +1,6 @@
 import { Item } from "src/Entity/item.entity";
 
-export interface IItem {
+export interface IItemRepository {
 
     getAllItens();
     getItem(itemId: number);

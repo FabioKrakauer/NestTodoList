@@ -1,10 +1,9 @@
 import { EntityManager, EntityRepository, UpdateResult, DeleteResult } from "typeorm";
 import { Item } from "src/Entity/item.entity";
-import { IItem } from "src/interface/IItem.interface";
-import { List } from "src/Entity/list.entity";
+import { IItemRepository } from "src/interface/IItemRepository.interface";
 
 @EntityRepository()
-export class ItemRepository implements IItem{
+export class ItemRepository implements IItemRepository{
 
     constructor(private manager: EntityManager){ }
 

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, HttpStatus, HttpException, Put, Param, UseInterceptors, Delete, ValidationPipe } from '@nestjs/common';
+import { Controller, Post, Body, Get, HttpStatus, HttpException, Put, Param, UseInterceptors, Delete } from '@nestjs/common';
 import { Item } from 'src/Entity/item.entity';
 import { ItemService } from 'src/Provider/item.service';
 import { ListService } from 'src/Provider/list.service';
@@ -18,7 +18,7 @@ export class ItemController {
         try {
             return await this.itemService.getAllItens();
         } catch (error) {
-            throw new HttpException("Erro interno", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new HttpException("Erro interno: " + error, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     @Post('/new')
@@ -36,11 +36,7 @@ export class ItemController {
         if (!list) {
             throw new HttpException("Esta lista não existe!", HttpStatus.BAD_REQUEST);
         }
-        try {
-            return this.itemService.registerNewItem(body);
-        } catch (error) {
-            throw new HttpException("Erro interno", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return this.itemService.registerNewItem(body);
     }
     @Get('/:id')
     async getItem(@Param() param): Promise<Item> {
