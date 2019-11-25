@@ -1,9 +1,11 @@
-import { Controller, Get, HttpException, HttpStatus, Param, Post, Body, Put } from '@nestjs/common';
+import { Controller, Get, HttpException, HttpStatus, Param, Post, Body, Put, UseInterceptors, Delete } from '@nestjs/common';
 import { ListService } from 'src/Provider/list.service';
 import { List } from 'src/Entity/list.entity';
 import { Validator } from 'src/DTO/validator.dto';
 import { CorrectData } from 'src/DTO/correctionData.dto';
 import { UpdateResult } from 'typeorm';
+import { ValidatorInterceptor } from 'src/interceptors/ValidatorInterceptor';
+import { ValidateUpdateListContract } from 'src/Contract/ValidateUpdateList.contract';
 
 @Controller('list')
 export class ListController {
@@ -39,17 +41,18 @@ export class ListController {
         return await this.listService.createNewList(list);
     }
     @Put('/:listId')
+    @UseInterceptors(new ValidatorInterceptor(new ValidateUpdateListContract()))
     async updateList(@Param() param, @Body() body): Promise<object> {
         if(param.listId < 1){
             throw new HttpException("Erro ao indentificar id", HttpStatus.BAD_REQUEST);
         }
-        const validateValues = new Validator().validateListUpdate(body);
-        if(validateValues.error === true){
-            throw new HttpException(validateValues.message, HttpStatus.BAD_REQUEST);
-        }
         const object = new CorrectData().constructListUpdate(body);
 
         const queryResult: UpdateResult = await this.listService.updateList(param.id, object);
-        return { affectedRows: queryResult.raw.affectedRows };  
+        return { affectedRows: queryResult.raw.affectedRows };
+    }
+    @Delete('/:listId')
+    async deleteRoute(@Param('listId') id): Promise<{affectedRow}> {
+        return await this.listService.deleteList(id);
     }
 }

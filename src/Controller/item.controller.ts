@@ -1,12 +1,12 @@
-import { Controller, Post, Body, Get, HttpStatus, HttpException, Put, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, HttpStatus, HttpException, Put, Param, UseInterceptors, Delete, ValidationPipe } from '@nestjs/common';
 import { Item } from 'src/Entity/item.entity';
 import { ItemService } from 'src/Provider/item.service';
 import { ListService } from 'src/Provider/list.service';
 import { List } from 'src/Entity/list.entity';
 import { UpdateResult } from 'typeorm';
-import { Validator } from 'src/DTO/validator.dto';
-import { throws } from 'assert';
 import { CorrectData } from 'src/DTO/correctionData.dto';
+import { ValidatorInterceptor } from 'src/interceptors/ValidatorInterceptor';
+import { ValidateUpdateItemContract } from 'src/Contract/ValidateUpdateItem.contract';
 
 @Controller('item')
 export class ItemController {
@@ -51,6 +51,7 @@ export class ItemController {
     }
 
     @Put('/:itemId/:listId')
+    @UseInterceptors(new ValidatorInterceptor(new ValidateUpdateItemContract()))
     async updateItemValue(@Param() params, @Body() body): Promise<object> {
         if (params.itemId < 1) {
             throw new HttpException("ID do item invalido!", HttpStatus.BAD_REQUEST);
@@ -58,14 +59,17 @@ export class ItemController {
         if (params.listId < 1) {
             throw new HttpException("ID da lista invalido!", HttpStatus.BAD_REQUEST);
         }
-        const validateValues = new Validator().validateItemUpdate(body);
-        if (validateValues.error == true) {
-            throw new HttpException(validateValues.message, HttpStatus.BAD_REQUEST);
-        }
 
         const objects: object = new CorrectData().constructItemUpdate(body);
 
         const queryResult: UpdateResult = await this.itemService.updateItem(params.itemId, params.listId, objects);
         return { affectedRows: queryResult.raw.affectedRows };
     }
+    @Delete('/:itemId')
+    async deleteItem(@Param('itemId') itemId: number): Promise<object> {
+        if(itemId < 1) {
+            throw new HttpException("Erro ao indentificar id do item", HttpStatus.BAD_REQUEST);
+        }
+        return await this.itemService.deleteItem(itemId);
+    } 
 }

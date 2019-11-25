@@ -1,4 +1,4 @@
-import { EntityManager, EntityRepository, UpdateResult } from "typeorm";
+import { EntityManager, EntityRepository, UpdateResult, DeleteResult } from "typeorm";
 import { Item } from "src/Entity/item.entity";
 import { IItem } from "src/interface/IItem.interface";
 import { List } from "src/Entity/list.entity";
@@ -22,5 +22,8 @@ export class ItemRepository implements IItem{
             id: item,
             list: list
         }, values);
+    }
+    async deleteItem(item: number): Promise<DeleteResult> {
+        return await this.manager.delete(Item, {id: item});
     }
 }

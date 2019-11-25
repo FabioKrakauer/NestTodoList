@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ItemRepository } from 'src/Repository/item.repository';
-import { getCustomRepository, UpdateResult } from 'typeorm';
+import { getCustomRepository, UpdateResult, DeleteResult } from 'typeorm';
 import { Item } from 'src/Entity/item.entity';
 
 @Injectable()
@@ -21,5 +21,9 @@ export class ItemService {
     }
     async updateItem(itemId: number, listId: number, values: object): Promise<UpdateResult> {
         return await this.itemRepository.updateItem(itemId, listId, values);
+    }
+    async deleteItem(item: number): Promise<object> {
+        const result: DeleteResult = await this.itemRepository.deleteItem(item);
+        return {affectedRows: result.raw.affectedRows};
     }
 }
