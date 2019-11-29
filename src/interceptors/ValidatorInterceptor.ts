@@ -7,9 +7,9 @@ import { ContractInterface } from "src/interface/Contract.interface";
 export class ValidatorInterceptor implements NestInterceptor {
     constructor(private contract: ContractInterface){ }
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-        const validate: {error, message} = this.contract.validate(context.switchToHttp().getRequest().body);
+        const validate: {error, errors} = this.contract.validate(context.switchToHttp().getRequest().body);
         if(validate.error == true){
-            throw new HttpException("Error: " + validate.message, HttpStatus.BAD_REQUEST);
+            throw new HttpException("Error: " + JSON.stringify(validate.errors), HttpStatus.BAD_REQUEST);
         }
         return next.handle();
     }

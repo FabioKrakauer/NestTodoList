@@ -13,7 +13,7 @@ export class Item {
     @Column({type: 'text'})
     description: string;
 
-    @ManyToOne(type => List, list => list.item)
+    @ManyToOne(type => List, list => list.itens)
     @JoinColumn({
         name: 'list'
     })

@@ -3,7 +3,7 @@ import { Item } from "src/Entity/item.entity";
 
 export class ValidateUpdateItemContract implements ContractInterface {
 
-    validate(item: Item) {
+    validate(item: Item): {error, errors} {
         let result = {error: false, errors: []};
         if (!item) {
             result.error = true;

@@ -1,4 +1,4 @@
 export interface ContractInterface { 
 
-    validate(object: object);
+    validate(object: object): {error, errors};
 }

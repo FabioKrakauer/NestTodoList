@@ -1,6 +1,7 @@
-import { Entity, EntityManager, EntityRepository, DeleteResult } from "typeorm";
+import { Entity, EntityManager, EntityRepository, DeleteResult, Double } from "typeorm";
 import { List } from "src/Entity/list.entity";
 import { Item } from "src/Entity/item.entity";
+import { stringLiteral } from "@babel/types";
 
 @EntityRepository()
 export class ListRepository { 
@@ -8,7 +9,7 @@ export class ListRepository {
     constructor(private manager: EntityManager){ }
 
     async getListById(id: number): Promise<List> { 
-        return await this.manager.findOne(List, {id: id}, {relations: ['item']});
+        return await this.manager.findOne(List, {id: id}, {relations: ['itens']});
     }
     async getAllLists(): Promise<List[]> { 
         return await this.manager.find(List);

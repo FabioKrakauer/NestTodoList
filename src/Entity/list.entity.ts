@@ -14,6 +14,6 @@ export class List {
     description: string
 
     @OneToMany(type => Item, item => item.list)
-    item: Item[];
+    itens: Item[];
     
 }

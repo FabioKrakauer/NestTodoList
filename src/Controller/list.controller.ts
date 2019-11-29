@@ -54,4 +54,8 @@ export class ListController {
     async deleteRoute(@Param('listId') id): Promise<{affectedRow}> {
         return await this.listService.deleteList(id);
     }
+    @Get('/completed/:listId')
+    async getCompletedPercent(@Param('listId') listId): Promise<object>{
+        return {result: await this.listService.getCompletedPercent(listId)};
+    }
 }
